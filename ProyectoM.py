@@ -21,21 +21,24 @@ def abrir_ventana_registro():
     ventanaP.withdraw()
     ventana_registro = tk.Toplevel(ventanaP)
     ventana_registro.title("Registro")
-    canvas_registro = tk.Canvas(ventana_registro, width=400, height=650, bg="#D5D2FF")
-    canvas_registro.place(x=0, y=0)
+    ventana_registro.geometry("400x400")
+
+    canvas_registro = tk.Canvas(ventana_registro, width=400, height=650, bg="black")
+    canvas_registro.pack()
 
     # Campos para ingresar información
-    tk.Label(ventana_registro, text="Nombre de Usuario:").pack()
+    tk.Label(canvas_registro, text="Nombre de Usuario:").place(x=50, y=50)
     entry_usuario = tk.Entry(canvas_registro)
-    entry_usuario.pack()
+    entry_usuario.place(x=200, y=50)
 
-    tk.Label(ventana_registro, text="Correo:").pack()
-    entry_correo = tk.Entry(ventana_registro)
-    entry_correo.pack()
+    tk.Label(canvas_registro, text="Correo:").place(x=50, y=100)
+    entry_correo = tk.Entry(canvas_registro)
+    entry_correo.place(x=200, y=100)
 
-    tk.Label(ventana_registro, text="Contraseña (máx. 10 caracteres):").pack()
-    entry_contrasena = tk.Entry(ventana_registro, show="*")
-    entry_contrasena.pack()
+    tk.Label(canvas_registro, text="Contraseña (máx. 10 caracteres):").place(x=50, y=150)
+    entry_contrasena = tk.Entry(canvas_registro, show="*")
+    entry_contrasena.place(x=200, y=150)
+
     def registrar_usuario():
         # Obtener los valores de los campos
         nombre_usuario = entry_usuario.get()
@@ -44,42 +47,38 @@ def abrir_ventana_registro():
 
         # Verificar que no haya dos usuarios con el mismo nombre
         if nombre_usuario in usuarios_registrados:
-            mostrar_mensaje("El nombre de usuario ya está ocupado. Por favor, elija otro.")
-            return
+            messagebox.showerror("Registro", "Usuario ya existente. Por favor elija otro.")
 
         # Verificar que no haya campos en blanco
-        if not nombre_usuario or not correo or not contrasena:
-            mostrar_mensaje("No puede dejar campos en blanco. Complete todos los campos.")
-            return
+        elif not nombre_usuario or not correo or not contrasena:
+            messagebox.showerror("Registro", "Por favor rellene todos los espacios")
 
-        # Guardar los datos en un diccionario
-        nuevo_usuario = {
-            "nombre_usuario": nombre_usuario,
-            "correo": correo,
-            "contrasena": contrasena,
-            # Agrega más campos según sea necesario
-        }
+        elif len(contrasena) >= 8:
+            messagebox.showerror("Registro", "La contraseña no puede ser mayor de 8 caracteres")
 
-        # Guardar el nuevo usuario en el archivo JSON
-        with open("usuarios.json", "a") as file:
-            json.dump(nuevo_usuario, file)
-            file.write("\n")  # Agregar salto de línea para separar usuarios
+        #Guardar datos
+        else:
+            nuevo_usuario = {
+                "nombre_usuario": nombre_usuario,
+                "correo": correo,
+                "contrasena": contrasena,
+                # Agrega más campos según sea necesario
+            }
 
-        # Cerrar la ventana de registro
-        ventana_registro.destroy()
+            # Guardar el nuevo usuario en el archivo JSON
+            with open("usuarios.json", "a") as file:
+                json.dump(nuevo_usuario, file)
+                file.write("\n")  # Agregar salto de línea para separar usuarios
+
 
     def cargar_imagen():
         # Abrir un cuadro de diálogo para seleccionar la imagen
         ruta_imagen = filedialog.askopenfilename(title="Seleccionar imagen")
         # Podrías almacenar la ruta en la base de datos o hacer algo con la imagen aquí
 
-    def mostrar_mensaje(mensaje):
-        # Función para mostrar un cuadro de mensaje
-        tk.messagebox.showinfo("Mensaje", mensaje)
 
-
-    tk.Button(ventana_registro, text="Cargar Imagen", command=cargar_imagen).pack()
-    tk.Button(ventana_registro, text="Guardar", command=registrar_usuario).pack()
+    tk.Button(canvas_registro, text="Cargar Imagen", command=cargar_imagen).place(x=50, y=200)
+    tk.Button(canvas_registro, text="Guardar", command=registrar_usuario).place(x=200, y=200)
 
 
 
